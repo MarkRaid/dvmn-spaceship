@@ -12,6 +12,10 @@ from constants import BORDER_SIZE
 from physics import update_speed
 from obstacles import Obstacle
 from explosion import explode
+from pathlib import Path
+
+
+ARTS_DIR = Path("./arts")
 
 
 obstacles = []
@@ -87,6 +91,7 @@ async def draw_spaceship(canvas, coroutines, rocket_animation, presed_keys, wind
     while True:
         for obstacle in obstacles:
             if obstacle.has_collision(rocket_curent_row_coords, rocket_curent_col_coords):
+                coroutines.append(show_gameover(canvas))
                 return
 
         if is_need_update_frame:
@@ -130,14 +135,14 @@ async def draw_spaceship(canvas, coroutines, rocket_animation, presed_keys, wind
 
 
 async def show_gameover(canvas):
+    gameover_frame = helper.get_all_frames_in_dir_as_dict(ARTS_DIR)["game_over.txt"]
+    garbage_height, garbage_width = helper.get_frame_size(gameover_frame)
     canvas_rows, canvas_cols = canvas.getmaxyx()
-    # win = curses.newwin(100, 100, 10, 10)
-
-    title = "game over"
-    canvas.addstr(100, 100, title)
-    canvas.refresh()
+    garbage_row = canvas_rows // 2 - BORDER_SIZE - garbage_height // 2
+    garbage_col = canvas_cols // 2 - BORDER_SIZE - garbage_width // 2
 
     while True:
+        helper.draw_frame(canvas, garbage_row, garbage_col, gameover_frame)
         await asleep(1)
 
 
