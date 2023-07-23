@@ -89,24 +89,27 @@ def get_frame_size(text):
     return rows, cols
 
 
-def get_all_frames_in_dir(path):
+def get_all_frames_in_dir_as_dict(path):
     if not path.exists():
         raise DirNotFoundError
 
-    frames = [
-        file_name.read_text()
-        for file_name in filter(
+    frames = {
+        file.name: file.read_text()
+        for file in filter(
             Path.is_file,
             path.iterdir()
         )
-    ]
-
-    frames = list(filter(bool, frames))
+        if file.read_text()
+    }
 
     if not frames:
         raise FramesNotFoundError
 
     return frames
+
+
+def get_all_frames_in_dir(path):
+    return list(get_all_frames_in_dir_as_dict(path).values())
 
 
 async def asleep(tics=1):
