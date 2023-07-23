@@ -8,11 +8,9 @@ import helper
 from helper import asleep
 from constants import TIC_TIMEOUT
 from constants import BORDER_SIZE
-from constants import GARBAGE_DENSITY
 
 from physics import update_speed
 from obstacles import Obstacle
-from obstacles import has_collision
 from explosion import explode
 
 
@@ -72,9 +70,9 @@ async def blink(canvas, row, col, symbol='*', timeout=0):
         await asleep(int(0.3/TIC_TIMEOUT))
 
 
-async def draw_spaceship(canvas, coroutines, ROCKET_ANIMATION, presed_keys, window_size):
-    rocket_frames = iter(itertools.cycle(ROCKET_ANIMATION))
-    rocket_frame_rows_size, rocket_frame_cols_size = helper.get_frame_size(ROCKET_ANIMATION[0])
+async def draw_spaceship(canvas, coroutines, rocket_animation, presed_keys, window_size):
+    rocket_frames = iter(itertools.cycle(rocket_animation))
+    rocket_frame_rows_size, rocket_frame_cols_size = helper.get_frame_size(rocket_animation[0])
     center_point_row, center_point_col = window_size.rows // 2, window_size.cols // 2
     rocket_curent_row_coords, rocket_curent_col_coords = [
         center_point_row - rocket_frame_rows_size // 2,
@@ -122,7 +120,13 @@ async def draw_spaceship(canvas, coroutines, ROCKET_ANIMATION, presed_keys, wind
 
         await asleep(1)
 
-        helper.draw_frame(canvas, rocket_curent_row_coords, rocket_curent_col_coords, curent_rocket_animation_frame, negative=True)
+        helper.draw_frame(
+            canvas,
+            rocket_curent_row_coords,
+            rocket_curent_col_coords,
+            curent_rocket_animation_frame,
+            negative=True
+        )
 
 
 async def show_gameover(canvas):
@@ -173,12 +177,12 @@ async def fly_garbage(canvas, col, garbage_frame, obstacle, speed=0.5):
     obstacles.remove(obstacle)
 
 
-async def fill_orbit_with_garbage(canvas, coroutines, GARBAGE_FRAMES, cols_count_without_border):
+async def fill_orbit_with_garbage(canvas, coroutines, garbage_frames, cols_count_without_border):
     while True:
         await asleep(10)
 
         col = random.randint(BORDER_SIZE, cols_count_without_border)
-        garbage_frame = random.choice(GARBAGE_FRAMES)
+        garbage_frame = random.choice(garbage_frames)
         garbage_height, garbage_width = helper.get_frame_size(garbage_frame)
 
         obstacle = Obstacle(

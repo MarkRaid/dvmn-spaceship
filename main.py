@@ -8,7 +8,6 @@ from pathlib import Path
 import animations
 import constants
 import helper
-import obstacles
 
 from constants import TIC_TIMEOUT
 from constants import BORDER_SIZE
@@ -17,6 +16,7 @@ Rectangle = namedtuple("Rectangle", ("rows", "cols"))
 
 ROCKET_FRAMES_DIR  = Path("./rocket_frames")
 GARBAGE_FRAMES_DIR = Path("./garbage_frames")
+
 
 def draw(canvas):
 	try:
@@ -73,9 +73,7 @@ def draw(canvas):
 		for _ in range(STARS_COUNT)
 	]
 
-
 	presed_keys = [0, 0, False]
-
 
 	coroutines = [
 		*stars,
@@ -103,7 +101,6 @@ def draw(canvas):
 	# 	animations.obstacles,
 	# ))
 
-
 	while True:
 		presed_keys[0], presed_keys[1], presed_keys[2] = helper.read_controls(canvas)
 
@@ -115,6 +112,7 @@ def draw(canvas):
 
 		canvas.refresh()
 		time.sleep(TIC_TIMEOUT)
+
 
 curses.update_lines_cols()
 curses.wrapper(draw)

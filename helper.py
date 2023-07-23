@@ -4,21 +4,25 @@ from pathlib import Path
 
 
 SPACE_KEY_CODE = 32
-LEFT_KEY_CODE  = 260
+LEFT_KEY_CODE = 260
 RIGHT_KEY_CODE = 261
-UP_KEY_CODE    = 259
-DOWN_KEY_CODE  = 258
+UP_KEY_CODE = 259
+DOWN_KEY_CODE = 258
 
 
-class DirNotFoundError(Exception): pass
-class FramesNotFoundError(Exception): pass
+class DirNotFoundError(Exception):
+    pass
+
+
+class FramesNotFoundError(Exception):
+    pass
 
 
 def read_controls(canvas):
     """Read keys pressed and returns tuple with controls state."""
     
     rows_direction = cols_direction = 0
-    space_pressed  = False
+    space_pressed = False
 
     while True:
         pressed_key_code = canvas.getch()
