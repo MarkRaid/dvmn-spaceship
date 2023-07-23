@@ -5,6 +5,7 @@ import random
 from collections import namedtuple
 from pathlib import Path
 
+import game_scenario
 import animations
 import constants
 import helper
@@ -79,6 +80,9 @@ def draw(canvas):
 		*stars,
 		animations.draw_fps(canvas),
 		animations.draw_obstacles_counter(canvas),
+		animations.draw_year(canvas),
+
+		game_scenario.time_flow()
 	]
 
 	coroutines.append(animations.draw_spaceship(
@@ -95,11 +99,6 @@ def draw(canvas):
 		GARBAGE_FRAMES,
 		cols_count_without_border
 	))
-
-	# coroutines.append(obstacles.show_obstacles(
-	# 	canvas,
-	# 	animations.obstacles,
-	# ))
 
 	while True:
 		presed_keys[0], presed_keys[1], presed_keys[2] = helper.read_controls(canvas)

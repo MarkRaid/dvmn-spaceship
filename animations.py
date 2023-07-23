@@ -5,6 +5,8 @@ import time
 import math
 
 import helper
+import game_scenario
+
 from helper import asleep
 from constants import TIC_TIMEOUT
 from constants import BORDER_SIZE
@@ -16,7 +18,6 @@ from pathlib import Path
 
 
 ARTS_DIR = Path("./arts")
-
 
 obstacles = []
 obstacles_in_last_collisions = set()
@@ -114,7 +115,7 @@ async def draw_spaceship(canvas, coroutines, rocket_animation, presed_keys, wind
         rocket_new_col_coord = rocket_curent_col_coords + column_speed
         rocket_curent_col_coords = min(max_rocket_col_coord, max(rocket_new_col_coord, BORDER_SIZE))
 
-        if presed_keys[2]:
+        if game_scenario.YEAR_OF_APPEARANCE_OF_WEAPON <= game_scenario.current_year and presed_keys[2]:
             coroutines.append(fire(
                 canvas,
                 rocket_new_row_coord,
@@ -184,7 +185,13 @@ async def fly_garbage(canvas, col, garbage_frame, obstacle, speed=0.5):
 
 async def fill_orbit_with_garbage(canvas, coroutines, garbage_frames, cols_count_without_border):
     while True:
-        await asleep(10)
+        garbage_delay_tics = game_scenario.get_garbage_delay_tics(game_scenario.current_year)
+
+        if not garbage_delay_tics:
+            await asleep(1)
+            continue
+
+        await asleep(garbage_delay_tics)
 
         col = random.randint(BORDER_SIZE, cols_count_without_border)
         garbage_frame = random.choice(garbage_frames)
@@ -207,7 +214,19 @@ async def fill_orbit_with_garbage(canvas, coroutines, garbage_frames, cols_count
         ))
 
 
-async def draw_fps(canvas, row=BORDER_SIZE, col=BORDER_SIZE):
+async def draw_year(canvas, row=BORDER_SIZE, col=BORDER_SIZE):
+    while True:
+        title = f"{game_scenario.current_year} year"
+
+        if game_scenario.PHRASES.get(game_scenario.current_year):
+            title += f": {game_scenario.PHRASES.get(game_scenario.current_year)}"
+
+        helper.draw_frame(canvas, row, col, title)
+        await asleep(1)
+        helper.draw_frame(canvas, row, col, title, negative=True)
+
+
+async def draw_fps(canvas, row=BORDER_SIZE + 1, col=BORDER_SIZE):
     fps = 0
 
     while True:
@@ -218,7 +237,7 @@ async def draw_fps(canvas, row=BORDER_SIZE, col=BORDER_SIZE):
         helper.draw_frame(canvas, row, col, f"{fps:0>6.2f} fps")
 
 
-async def draw_obstacles_counter(canvas, row=BORDER_SIZE + 1, col=BORDER_SIZE):
+async def draw_obstacles_counter(canvas, row=BORDER_SIZE + 2, col=BORDER_SIZE):
     while True:
         helper.draw_frame(canvas, row, col, f"{len(obstacles)} obstacles")
         await asleep(1)
